@@ -17,6 +17,8 @@ function parse_file_info($file_path) {
      * -{尺寸}{偏移}{对齐}{裁切}
      */
     $pat = '/-([whxy]\d+)+(\w{1,3})?\.(jpg|jpeg|png|gif)$/i';
+    // Wordpress 默认的修饰样式
+    $pat_wp = '/-(\d+)x(\d+)\.(jpg|jpeg|png|gif)$/i';
     if (preg_match($pat, $info['filename'])) {
         $info['is_thumb'] = TRUE;
         $info['original'] = preg_replace($pat, '.$3', $info['filename']);
@@ -65,7 +67,21 @@ function parse_file_info($file_path) {
         }
 
         $info['config_str'] = $conf_str;
-    } else {
+    }
+    else if (preg_match($pat_wp, $info['filename']))
+    {
+        $conf = array();
+        preg_match_all($pat_wp, $info['filename'], $conf);
+        $info['is_thumb'] = TRUE;
+        $info['original'] = preg_replace($pat_wp, '.$3', $info['filename']);
+        $info['format'] = $conf[3][0];
+        $info['t_width'] = $conf[1][0];
+        $info['t_height'] = $conf[2][0];
+        $info['t_align'] = 'CM';
+        $info['t_crop'] = 'O';
+    }
+    else
+    {
         $info['original'] = $info['filename'];
         // Do nothing
     }
@@ -111,7 +127,7 @@ switch($image_info['t_crop']) {
         break;
 }
 
-$base_path = realpath('../');
+$base_path = realpath('../../../../../');
 $source = $base_path . $image_info['input'];
 $target = $base_path . $image_info['output'];
 
