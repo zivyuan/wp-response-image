@@ -91,8 +91,7 @@ function parse_file_info($file_path) {
     return $info;
 }
 
-
-$image_info = parse_file_info($_SERVER['REQUEST_URI']);
+$image_info = parse_file_info( urldecode($_SERVER['REQUEST_URI'] ));
 
 if (!isset($image_info['t_width'])) {
     $size = 'h' . $image_info['t_height'];
