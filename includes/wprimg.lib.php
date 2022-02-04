@@ -197,33 +197,35 @@ if (!function_exists('imagerotatei')) {
 	 * @param  integer $quality     [description]
 	 * @return [type]               [description]
 	 */
-	function imagerotatei($image_source, $orientation, $quality = 90)
+	function imagerotatei($image_source, $orientation = 0, $quality = 90, $target_file = FALSE)
 	{
-		$degrees = array(
-			0,     //
-			// 1 "top left side"
-			0,
-			// "top right side"
-			0,
-			// 3 "bottom right side"
-			180,
-			// "bottom left side"
-			0,
-			// 6 "left side top"
-			90,
-			// "right side top"
-			-90,
-			// 8 "right side bottom"
-			90,
-			// "left side bottom"
-			90
-		);
+        $ret = TRUE;
+        $target_file = $target_file ? $target_file : $image_source;
+        $exif = exif_read_data($image_source);
 
-		$degree = is_numeric($orientation) ? $degrees[$orientation] : 0;
-		if ($degree != 0) {
-			imagetofile($image_source, $filename, $quality);
-		}
-	}
+        if (!empty($exif['Orientation'])) {
+            $image = imagefromfile($image_source);
+            switch($exif['Orientation']) {
+                case 8:
+                    $image = imagerotate($image, 90, 0);
+                    break;
+                case 3:
+                    $image = imagerotate($image, 180, 0);
+                    break;
+                case 6:
+                    $image = imagerotate($image, -90, 0);
+                    break;
+                default:
+                    $image = FALSE;
+            }
+
+            if ($image) {
+                $ret = imagetofile($image, $target_file, $quality);
+            }
+        }
+
+        return $ret ? $target_file : 4;
+    }
 
 }
 
@@ -243,16 +245,16 @@ if (!function_exists('imagefromfile')) {
 		return $img_r;
 	}
 
-	function imagetofile($source, $filename, $quality = 80)
+	function imagetofile($gdimage, $filename, $quality = 90)
 	{
-		if (!$source) return FALSE;
+		if (!$gdimage) return FALSE;
 
 		if (preg_match('/\.(jpeg|jpg)$/i', $filename)) {
-			$ret = imagejpeg($source, $filename, $quality);
+			$ret = imagejpeg($gdimage, $filename, $quality);
 		}else if(preg_match('/\.png$/i', $filename)){
-			$ret = imagepng($source, $filename, $quality / 10);
+			$ret = imagepng($gdimage, $filename, $quality / 10);
 		}else if(preg_match('/\.gif$/i', $filename)){
-			$ret = imagegif($source, $filename);
+			$ret = imagegif($gdimage, $filename);
 		}else{
 			$ret = FALSE;
 		}

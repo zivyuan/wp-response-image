@@ -130,11 +130,11 @@ $base_path = realpath('../../../../../');
 $source = $base_path . $image_info['input'];
 $target = $base_path . $image_info['output'];
 
-if (file_exists($source)) {
-    echo '<p>source found at: '.$source.'</p>';
-} else {
+if (!file_exists($source)) {
     echo '<p>source not exists</p>';
     exit(1);
+// } else {
+//     echo '<p>source found at: '.$source.'</p>';
 }
 
 $ret = imagecropi(
@@ -145,6 +145,7 @@ $ret = imagecropi(
     0xFFFFFF,
     $target,
 );
+$ret = imagerotatei($source, 0, 90, $target);
 
 
 if (file_exists($target)) {
