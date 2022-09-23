@@ -91,7 +91,7 @@ function parse_file_info($file_path) {
     return $info;
 }
 
-$image_info = parse_file_info( urldecode($_SERVER['REQUEST_URI'] ));
+$image_info = parse_file_info( urldecode($_SERVER['REQUEST_URI']) );
 
 if (!isset($image_info['t_width'])) {
     $size = 'h' . $image_info['t_height'];
@@ -133,19 +133,22 @@ $target = $base_path . $image_info['output'];
 if (!file_exists($source)) {
     echo '<p>source not exists</p>';
     exit(1);
-// } else {
-//     echo '<p>source found at: '.$source.'</p>';
 }
 
-$ret = imagecropi(
-    $source,
-    $size,
-    $align,
-    $crop,
-    0xFFFFFF,
-    $target,
-);
-$ret = imagerotatei($source, 0, 90, $target);
+$gif = '/\.(gif)$/i';
+if (preg_match($gif, $source)) {
+    copy($source, $target);
+} else {
+    $ret = imagecropi(
+        $source,
+        $size,
+        $align,
+        $crop,
+        0xFFFFFF,
+        $target,
+    );
+    $ret = imagerotatei($source, 0, 90, $target);
+}
 
 
 if (file_exists($target)) {
