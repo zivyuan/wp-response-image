@@ -131,6 +131,7 @@ $source = $base_path . $image_info['input'];
 $target = $base_path . $image_info['output'];
 
 if (!file_exists($source)) {
+    echo '<pre>'; print_r($image_info); echo '</pre>';
     echo '<p>source not exists</p>';
     exit(1);
 }
@@ -148,9 +149,10 @@ if (preg_match($gif, $source)) {
         $target,
     );
     $ret = imagerotatei($source, 0, 90, $target);
+    $ret = imagewatermark($target, $target, '../assets/watermark-96-grey.png');
 }
-
 
 if (file_exists($target)) {
     header("Location: " . $image_info['output']);
+    exit;
 }

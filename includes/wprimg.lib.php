@@ -166,6 +166,9 @@ if (!function_exists('imagecropi')) {
         $cr = $bgcolor >> 4;
         $cg = ($bgcolor << 2) >> 4;
         $cb = ($bgcolor << 4) >> 4;
+        $cr = $cr > 255 ? 255 : $cr;
+        $cg = $cg > 255 ? 255 : $cg;
+        $cb = $cb > 255 ? 255 : $cb;
         $color = imagecolorallocate($dst_r, $cr, $cg, $cb);
         imagefill($dst_r, 0, 0, $color);
 
@@ -186,7 +189,6 @@ if (!function_exists('imagecropi')) {
     // Function imagecropi end
     //
 }
-
 
 if (!function_exists('imagerotatei')) {
 
@@ -263,6 +265,24 @@ if (!function_exists('imagefromfile')) {
 
 }
 
+if (!function_exists('imagewatermark')) {
+    function imagewatermark($source, $target, $watermark) {
+        $imgInfo = getimagesize($source);
+        $markInfo = getimagesize($watermark);
+
+        $wm_x = ($imgInfo[0] - $markInfo[0]) / 2;
+        $wm_y = $imgInfo[1] - 32 - $markInfo[1];
+
+        $img = imagefromfile($source);
+        $mark = imagefromfile($watermark);
+        imagecopy($img, $mark,
+            $wm_x, $wm_y,
+            0, 0, $markInfo[0], $markInfo[1]
+        );
+
+        imagetofile($img, $target);
+    }
+}
 
 //
 // File END
