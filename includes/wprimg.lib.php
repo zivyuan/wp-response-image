@@ -270,8 +270,13 @@ if (!function_exists('imagewatermark')) {
         $imgInfo = getimagesize($source);
         $markInfo = getimagesize($watermark);
 
-        $wm_x = ($imgInfo[0] - $markInfo[0]) / 2;
-        $wm_y = $imgInfo[1] - 32 - $markInfo[1];
+        // Align bottom center
+        // $wm_x = ($imgInfo[0] - $markInfo[0]) / 2;
+        // $wm_y = $imgInfo[1] - 32 - $markInfo[1];
+
+        // Align bottom right
+        $wm_x = $imgInfo[0] - $markInfo[0] - 32;
+        $wm_y = $imgInfo[1] - $markInfo[1] - 32;
 
         $img = imagefromfile($source);
         $mark = imagefromfile($watermark);

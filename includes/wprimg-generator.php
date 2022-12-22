@@ -149,7 +149,9 @@ if (preg_match($gif, $source)) {
         $target,
     );
     $ret = imagerotatei($source, 0, 90, $target);
-    $ret = imagewatermark($target, $target, '../assets/watermark-96-grey.png');
+    if ($image_info['t_width'] > 720) {
+        $ret = imagewatermark($target, $target, '../assets/watermark-96-grey.png');
+    }
 }
 
 if (file_exists($target)) {
